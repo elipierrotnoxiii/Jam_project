@@ -15,14 +15,22 @@ public class FlyingEnemy : MonoBehaviour
     float patrolAngle = 0f;
     bool isFleeing = false;
     bool canPatrol = true;
+    bool isStunned = false; // NUEVO
+
+    private Rigidbody rb;
 
     void Start()
     {
+        rb = GetComponent<Rigidbody>(); // CORREGIDO
         startPosition = transform.position;
+        rb.useGravity = false; // Asegura que normalmente no tenga gravedad
+        rb.linearVelocity = Vector3.zero;
     }
 
     void Update()
     {
+        if (isStunned) return; // Si está aturdido, no hace nada
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= detectionRange && !isFleeing)
@@ -50,6 +58,33 @@ public class FlyingEnemy : MonoBehaviour
             transform.forward = dir;
     }
 
+    public void Stun(float duration)
+    {
+        if (!isStunned)
+        {
+            StartCoroutine(StunCoroutine(duration));
+        }
+    }
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        canPatrol = false;
+        isFleeing = false;
+
+        rb.useGravity = true;
+        rb.linearVelocity = Vector3.zero; // Detiene cualquier movimiento
+        // Opcional: puedes desactivar el collider si quieres que no interactúe con nada más
+
+        yield return new WaitForSeconds(duration);
+
+        rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+        isStunned = false;
+        canPatrol = true;
+        // El enemigo vuelve a volar y patrullar
+    }
+
     IEnumerator FleeFromPlayer()
     {
         isFleeing = true;
@@ -59,7 +94,7 @@ public class FlyingEnemy : MonoBehaviour
         Vector3 targetPosition = transform.position + fleeDirection * fleeDistance;
 
         float elapsed = 0f;
-        while (elapsed < fleeDuration)
+        while (elapsed < fleeDuration && !isStunned) // Solo huye si no está aturdido
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
 

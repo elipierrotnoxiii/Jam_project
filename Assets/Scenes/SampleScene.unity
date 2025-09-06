@@ -447,7 +447,7 @@ MonoBehaviour:
   patrolRadius: 4
   patrolSpeed: 2
   fleeDistance: 5
-  fleeDuration: 1
+  fleeDuration: 3
 --- !u!114 &391480210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,6 +677,37 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
+--- !u!1 &598414191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 598414192}
+  m_Layer: 0
+  m_Name: StunHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &598414192
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598414191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.309, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1123025377}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &622410760
 GameObject:
   m_ObjectHideFlags: 0
@@ -1234,6 +1265,7 @@ Transform:
   m_Children:
   - {fileID: 2016644374}
   - {fileID: 1848318685}
+  - {fileID: 598414192}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1123025378
@@ -1277,7 +1309,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
   hitboxOrigin: {fileID: 1848318685}
+  hitboxStunOrigin: {fileID: 598414192}
   radius: 0.5
+  radiusStun: 5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
