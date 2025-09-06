@@ -29,7 +29,11 @@ public class PlayerInputs : MonoBehaviour
         Collider[] hitEnemies = Physics.OverlapSphere(hitboxOrigin.position, radius, enemyLayer);
         foreach (Collider enemy in hitEnemies)
         {
-            // Here we reduce enemy hit points; example: enemy.GetComponent<EnemyHealth>();
+            EnemyHealth eHealth = enemy.GetComponent<EnemyHealth>();
+                if (eHealth != null)
+                {
+                    eHealth.TakeDamage(1); // inflige 1 de daño
+                }
         }
 
         yield return new WaitForSeconds(0.3f); // animation end
