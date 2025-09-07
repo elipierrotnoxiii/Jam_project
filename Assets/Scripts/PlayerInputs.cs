@@ -14,10 +14,6 @@ public class PlayerInputs : MonoBehaviour
     
     private bool isAttacking;
 
-    private bool isCooldown;
-
-    public SkillCooldownUI skillCooldown;
-
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !isAttacking)
@@ -25,36 +21,32 @@ public class PlayerInputs : MonoBehaviour
             StartCoroutine(Attack());
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && !isCooldown)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            StartCoroutine(StunFlyingEnemies());
+            StunFlyingEnemies();
         }
     }
 
 
 
-    private IEnumerator StunFlyingEnemies()
+    private void StunFlyingEnemies()
     {
-        isCooldown = true;
+         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
+    foreach (Collider enemy in hitEnemies)
+    {
+        // Intenta stunear cualquier enemigo que tenga el método Stun
+        var ground = enemy.GetComponent<GroundEnemy>();
+        if (ground != null)
+            ground.Stun(3f);
 
-        print("Skill Cooldown");
-        yield return new WaitForSeconds(0.2f);
+        var flying = enemy.GetComponent<FlyingEnemy>();
+        if (flying != null)
+            flying.Stun(3f);
 
-        skillCooldown.UseSkill();
-
-        Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
-        foreach (Collider enemy in hitEnemies)
-        {
-            FlyingEnemy flying = enemy.GetComponent<FlyingEnemy>();
-            if (flying != null)
-            {
-                flying.Stun(3f); // Assumes FlyingEnemy has a Stun(float duration) method
-            }
-        }
-
-        yield return new WaitForSeconds(5f);
-        isCooldown = false;
-        print("Skill Ready");
+        var charger = enemy.GetComponent<ChargerEnemy>();
+        if (charger != null)
+            charger.Stun(3f);
+    }
     }
     private IEnumerator Attack()
     {

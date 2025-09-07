@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class GroundEnemy : MonoBehaviour
@@ -12,6 +12,7 @@ public class GroundEnemy : MonoBehaviour
     private Vector3 startPosition;
     private float patrolAngle = 0f;
     private bool isChasing = false;
+    private bool isStunned = false; // <-- NUEVO
 
     void Start()
     {
@@ -20,6 +21,8 @@ public class GroundEnemy : MonoBehaviour
 
     void Update()
     {
+        if (isStunned) return; // <-- NUEVO
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= detectionRange)
@@ -50,8 +53,6 @@ public class GroundEnemy : MonoBehaviour
         Vector3 patrolPosition = startPosition + new Vector3(x, 0, z);
 
         transform.position = Vector3.MoveTowards(transform.position, patrolPosition, speed * Time.deltaTime);
-
-
     }
 
     void ChasePlayer()
@@ -61,5 +62,21 @@ public class GroundEnemy : MonoBehaviour
         Vector3 dir = (player.position - transform.position).normalized;
         if (dir != Vector3.zero)
             transform.forward = dir;
+    }
+
+    // --- STUN LOGIC ---
+    public void Stun(float duration)
+    {
+        if (!isStunned)
+        {
+            StartCoroutine(StunCoroutine(duration));
+        }
+    }
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
     }
 }

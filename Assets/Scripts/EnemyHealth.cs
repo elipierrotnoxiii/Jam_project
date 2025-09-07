@@ -1,9 +1,13 @@
 using UnityEngine;
+using System;
 
 public class EnemyHealth : MonoBehaviour
 {
     public int maxHealth = 1;
     private int currentHealth;
+
+    [HideInInspector] public EnemySpawner.EnemySpawnData spawnerData;
+    public Action onDeath;
 
     void Start()
     {
@@ -22,10 +26,7 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-        // Notificamos al GameManager que sume un punto
-        GameManager.instance.AddScore(1);
-
-        // Aquí puedes poner animación o partículas antes de destruir
+        if (onDeath != null) onDeath.Invoke();
         Destroy(gameObject);
     }
 }
