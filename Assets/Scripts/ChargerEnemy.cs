@@ -1,6 +1,5 @@
-using UnityEngine;
 using System.Collections;
-
+using UnityEngine;
 
 public class ChargerEnemy : MonoBehaviour
 {
@@ -10,13 +9,14 @@ public class ChargerEnemy : MonoBehaviour
     public float patrolSpeed = 2f;
     public float chargeForce = 500f;
     public float chargeCooldown = 2f;
-    public float chargeDuration = 0.5f; // Tiempo durante el cual la fuerza se aplica
-    public float chargeUpTime = 1f;     // Tiempo de "carga" antes de embestir
+    public float chargeDuration = 0.5f;
+    public float chargeUpTime = 1f;
 
     private Vector3 startPosition;
     private float patrolAngle = 0f;
     private bool isCharging = false;
     private bool isOnCooldown = false;
+    private bool isStunned = false;
     private Rigidbody rb;
     private Vector3 chargeDirection;
 
@@ -28,7 +28,7 @@ public class ChargerEnemy : MonoBehaviour
 
     void Update()
     {
-        if (isCharging || isOnCooldown)
+        if (isStunned || isCharging || isOnCooldown)
             return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -56,23 +56,34 @@ public class ChargerEnemy : MonoBehaviour
     {
         isCharging = true;
         rb.linearVelocity = Vector3.zero;
-
-        // 1. Carga (puedes poner animación aquí)
         yield return new WaitForSeconds(chargeUpTime);
 
-        // 2. Calcula dirección y aplica fuerza
         chargeDirection = (player.position - transform.position).normalized;
         rb.AddForce(chargeDirection * chargeForce, ForceMode.Impulse);
 
-        // 3. Espera a que termine la embestida
         yield return new WaitForSeconds(chargeDuration);
 
-        rb.linearVelocity = Vector3.zero; // Detén el movimiento tras la embestida
-
-        // 4. Cooldown antes de poder embestir de nuevo
+        rb.linearVelocity = Vector3.zero;
         isCharging = false;
         isOnCooldown = true;
         yield return new WaitForSeconds(chargeCooldown);
         isOnCooldown = false;
+    }
+
+    // --- STUN LOGIC ---
+    public void Stun(float duration)
+    {
+        if (!isStunned)
+        {
+            StartCoroutine(StunCoroutine(duration));
+        }
+    }
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        rb.linearVelocity = Vector3.zero;
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
     }
 }
