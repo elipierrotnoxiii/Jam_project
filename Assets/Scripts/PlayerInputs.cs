@@ -16,6 +16,7 @@ public class PlayerInputs : MonoBehaviour
     private bool isCooldown;
 
     public SkillCooldownUI skillCooldown;
+    public PlayerMovement playerMovement;
 
     void Update()
     {
@@ -35,10 +36,13 @@ public class PlayerInputs : MonoBehaviour
     private IEnumerator StunFlyingEnemies()
     {
         isCooldown = true;
-
+        playerMovement.canMove = false;
+        animator.SetBool("isSkill", true);
         print("Skill used");
-        yield return new WaitForSeconds(0.2f);
 
+        yield return new WaitForSeconds(0.2f);
+        playerMovement.canMove = true;
+        animator.SetBool("isSkill", false);
         skillCooldown.UseSkill();
 
         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
@@ -65,7 +69,8 @@ public class PlayerInputs : MonoBehaviour
     private IEnumerator Attack()
     {
         isAttacking = true;
-        // animation start
+        playerMovement.canMove = false;
+        animator.SetBool("isAttacking", true);
 
         print("attack started");
         yield return new WaitForSeconds(0.2f);
@@ -80,8 +85,10 @@ public class PlayerInputs : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(0.3f); // animation end
+        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("isAttacking", false);
         isAttacking = false;
+        playerMovement.canMove = true;
         print("attack ended");
     }
 
