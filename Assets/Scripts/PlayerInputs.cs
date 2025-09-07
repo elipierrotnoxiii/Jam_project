@@ -13,6 +13,9 @@ public class PlayerInputs : MonoBehaviour
     public LayerMask enemyLayer;
     
     private bool isAttacking;
+    private bool isCooldown;
+
+    public SkillCooldownUI skillCooldown;
 
     void Update()
     {
@@ -21,19 +24,26 @@ public class PlayerInputs : MonoBehaviour
             StartCoroutine(Attack());
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !isCooldown)
         {
-            StunFlyingEnemies();
+            StartCoroutine(StunFlyingEnemies());
         }
     }
 
 
 
-    private void StunFlyingEnemies()
+    private IEnumerator StunFlyingEnemies()
     {
-         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
-    foreach (Collider enemy in hitEnemies)
-    {
+        isCooldown = true;
+
+        print("Skill Used");
+        yield return new WaitForSeconds(0.2f);
+
+        skillCooldown.UseSkill();
+
+        Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
+        foreach (Collider enemy in hitEnemies)
+        {
         // Intenta stunear cualquier enemigo que tenga el método Stun
         var ground = enemy.GetComponent<GroundEnemy>();
         if (ground != null)
@@ -46,8 +56,13 @@ public class PlayerInputs : MonoBehaviour
         var charger = enemy.GetComponent<ChargerEnemy>();
         if (charger != null)
             charger.Stun(3f);
+        }
+
+        yield return new WaitForSeconds(5f);
+        isCooldown = false;
+        print("Skill Ready");
     }
-    }
+
     private IEnumerator Attack()
     {
         isAttacking = true;
