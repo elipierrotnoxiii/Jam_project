@@ -16,27 +16,22 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Respawn Timing")]
     public float baseRespawnTime = 10f;
-    public float minRespawnTime = 2f;
-    public float timeToMinRespawn = 180f; // En 3 minutos llega al mínimo
+    public float minRespawnTime = 3f; 
 
-    private float elapsedTime = 0f;
-
-    public Transform player; // <-- Campo para asignar el player
+    public Transform player;
 
     void Start()
     {
+        float currentRespawnTime = GetCurrentRespawnTime();
         foreach (var spawn in spawnPositions)
         {
-            SpawnEnemy(spawn);
+            SpawnEnemy(spawn, currentRespawnTime);
         }
     }
 
     void Update()
     {
-        elapsedTime += Time.deltaTime;
-
-        float t = Mathf.Clamp01(elapsedTime / timeToMinRespawn);
-        float currentRespawnTime = Mathf.Lerp(baseRespawnTime, minRespawnTime, t);
+        float currentRespawnTime = GetCurrentRespawnTime();
 
         foreach (var spawn in spawnPositions)
         {
@@ -51,11 +46,24 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    float GetCurrentRespawnTime()
+    {
+        // Usa timerRemaining como tiempo restante 
+        float timerRemaining = GameManager.instance != null ? GameManager.instance.timerRemaining : 600f;
+        float matchDuration = 600f; 
+
+        // Calcula el progreso de la partida (0 al inicio, 1 al final)
+        float t = 1f - Mathf.Clamp01(timerRemaining / matchDuration);
+
+        // Interpola entre baseRespawnTime y minRespawnTime según el progreso
+        float currentRespawnTime = Mathf.Lerp(baseRespawnTime, minRespawnTime, t);
+        return currentRespawnTime;
+    }
+
     void SpawnEnemy(EnemySpawnData spawn, float respawnTime = -1f)
     {
         spawn.currentEnemy = Instantiate(spawn.enemyPrefab, spawn.spawnPoint.position, spawn.spawnPoint.rotation);
 
-        // Asigna el player a los enemigos instanciados
         var flying = spawn.currentEnemy.GetComponent<FlyingEnemy>();
         if (flying != null)
             flying.player = player;
@@ -70,22 +78,17 @@ public class EnemySpawner : MonoBehaviour
 
         EnemyHealth health = spawn.currentEnemy.GetComponent<EnemyHealth>();
         if (health != null)
-        {
             health.spawnerData = spawn;
-        }
+
         EnemyReward reward = spawn.currentEnemy.GetComponent<EnemyReward>();
         if (reward != null)
-        {
             reward.spawner = this;
-        }
 
         spawn.respawnTimer = respawnTime > 0 ? respawnTime : baseRespawnTime;
     }
 
-    // Llamado por EnemyReward al morir el enemigo
     public void OnEnemyKilled(EnemySpawnData spawn)
     {
         spawn.currentEnemy = null;
-        // El respawnTimer ya se setea en Update
     }
 }
