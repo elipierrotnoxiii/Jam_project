@@ -14,6 +14,9 @@ public class GroundEnemy : MonoBehaviour
     private bool isChasing = false;
     private bool isStunned = false; // <-- NUEVO
 
+    [Header("Particle")]
+    public GameObject headBangPrefab; // NUEVO
+
     void Start()
     {
         startPosition = transform.position;
@@ -73,10 +76,13 @@ public class GroundEnemy : MonoBehaviour
         }
     }
 
-    private IEnumerator StunCoroutine(float duration)
+    private IEnumerator StunCoroutine(float duration) // colocar aqui la particula de estrellita
     {
+
+        headBangPrefab.SetActive(true);
         isStunned = true;
         yield return new WaitForSeconds(duration);
         isStunned = false;
+        headBangPrefab.SetActive(false);
     }
 }

@@ -20,6 +20,9 @@ public class ChargerEnemy : MonoBehaviour
     private Rigidbody rb;
     private Vector3 chargeDirection;
 
+    [Header("Particles")]
+    public GameObject headBangPrefab; // NUEVO
+
     void Start()
     {
         startPosition = transform.position;
@@ -79,11 +82,15 @@ public class ChargerEnemy : MonoBehaviour
         }
     }
 
-    private IEnumerator StunCoroutine(float duration)
+    private IEnumerator StunCoroutine(float duration) // colocar aqui la particula de estrellita
     {
+       
+        
+        headBangPrefab.SetActive(true);     
         isStunned = true;
         rb.linearVelocity = Vector3.zero;
         yield return new WaitForSeconds(duration);
         isStunned = false;
+        headBangPrefab.SetActive(false);
     }
 }

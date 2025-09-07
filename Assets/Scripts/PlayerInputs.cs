@@ -15,6 +15,9 @@ public class PlayerInputs : MonoBehaviour
     private bool isAttacking;
     private bool isCooldown;
 
+    public GameObject shockWavePrefab;
+    public Transform SpawnPoint;
+
     public SkillCooldownUI skillCooldown;
 
     void Update()
@@ -27,6 +30,7 @@ public class PlayerInputs : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !isCooldown)
         {
             StartCoroutine(StunFlyingEnemies());
+            
         }
     }
 
@@ -42,6 +46,8 @@ public class PlayerInputs : MonoBehaviour
         skillCooldown.UseSkill();
 
         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
+        GameObject explosion = Instantiate(shockWavePrefab, SpawnPoint.position, Quaternion.identity);  // Se instance la particula de shockwave
+        Destroy(explosion, 1.8f); // y luego de 1.8 segundos se destruye
         foreach (Collider enemy in hitEnemies)
         {
         // Intenta stunear cualquier enemigo que tenga el método Stun
