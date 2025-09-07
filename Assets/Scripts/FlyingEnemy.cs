@@ -17,6 +17,9 @@ public class FlyingEnemy : MonoBehaviour
     bool canPatrol = true;
     bool isStunned = false; // NUEVO
 
+    [Header("Particle")]
+    public GameObject headBangPrefab; // NUEVO
+
     private Rigidbody rb;
 
     void Start()
@@ -66,8 +69,10 @@ public class FlyingEnemy : MonoBehaviour
         }
     }
 
-    private IEnumerator StunCoroutine(float duration)
+    private IEnumerator StunCoroutine(float duration) // colocar aqui la particula de estrellita
     {
+
+        headBangPrefab.SetActive(true);
         isStunned = true;
         canPatrol = false;
         isFleeing = false;
@@ -82,6 +87,8 @@ public class FlyingEnemy : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         isStunned = false;
         canPatrol = true;
+        headBangPrefab.SetActive(false);
+
         // El enemigo vuelve a volar y patrullar
     }
 

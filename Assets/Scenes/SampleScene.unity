@@ -1360,6 +1360,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
+  shockWavePrefab: {fileID: 9080140021571130472, guid: 82066d902ed0dd6488ddfd32eb994801, type: 3}
+  SpawnPoint: {fileID: 598414192}
   skillCooldown: {fileID: 1254098354}
 --- !u!1 &1160938874
 GameObject:
@@ -1405,7 +1407,6 @@ MonoBehaviour:
     respawnTimer: 0
   baseRespawnTime: 10
   minRespawnTime: 2
-  timeToMinRespawn: 180
   player: {fileID: 1123025377}
 --- !u!4 &1160938876
 Transform:
