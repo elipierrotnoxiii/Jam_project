@@ -14,6 +14,10 @@ public class PlayerInputs : MonoBehaviour
     
     private bool isAttacking;
 
+    private bool isCooldown;
+
+    public SkillCooldownUI skillCooldown;
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !isAttacking)
@@ -21,16 +25,23 @@ public class PlayerInputs : MonoBehaviour
             StartCoroutine(Attack());
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !isCooldown)
         {
-            StunFlyingEnemies();
+            StartCoroutine(StunFlyingEnemies());
         }
     }
 
 
 
-    private void StunFlyingEnemies()
+    private IEnumerator StunFlyingEnemies()
     {
+        isCooldown = true;
+
+        print("Skill Cooldown");
+        yield return new WaitForSeconds(0.2f);
+
+        skillCooldown.UseSkill();
+
         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
         foreach (Collider enemy in hitEnemies)
         {
@@ -40,6 +51,10 @@ public class PlayerInputs : MonoBehaviour
                 flying.Stun(3f); // Assumes FlyingEnemy has a Stun(float duration) method
             }
         }
+
+        yield return new WaitForSeconds(5f);
+        isCooldown = false;
+        print("Skill Ready");
     }
     private IEnumerator Attack()
     {
