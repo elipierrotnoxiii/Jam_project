@@ -31,15 +31,22 @@ public class PlayerInputs : MonoBehaviour
 
     private void StunFlyingEnemies()
     {
-        Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
-        foreach (Collider enemy in hitEnemies)
-        {
-            FlyingEnemy flying = enemy.GetComponent<FlyingEnemy>();
-            if (flying != null)
-            {
-                flying.Stun(3f); // Assumes FlyingEnemy has a Stun(float duration) method
-            }
-        }
+         Collider[] hitEnemies = Physics.OverlapSphere(hitboxStunOrigin.position, radiusStun, enemyLayer);
+    foreach (Collider enemy in hitEnemies)
+    {
+        // Intenta stunear cualquier enemigo que tenga el método Stun
+        var ground = enemy.GetComponent<GroundEnemy>();
+        if (ground != null)
+            ground.Stun(3f);
+
+        var flying = enemy.GetComponent<FlyingEnemy>();
+        if (flying != null)
+            flying.Stun(3f);
+
+        var charger = enemy.GetComponent<ChargerEnemy>();
+        if (charger != null)
+            charger.Stun(3f);
+    }
     }
     private IEnumerator Attack()
     {

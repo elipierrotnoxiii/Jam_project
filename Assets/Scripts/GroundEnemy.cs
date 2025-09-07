@@ -1,10 +1,9 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class GroundEnemy : MonoBehaviour
 {
-    public Transform player; // <-- Campo para asignar el player
-
+    public Transform player;
     public float detectionRange = 5f;
     public float speed = 2f;
     public float patrolRadius = 3f;
@@ -13,6 +12,7 @@ public class GroundEnemy : MonoBehaviour
     private Vector3 startPosition;
     private float patrolAngle = 0f;
     private bool isChasing = false;
+    private bool isStunned = false; // <-- NUEVO
 
     void Start()
     {
@@ -21,27 +21,22 @@ public class GroundEnemy : MonoBehaviour
 
     void Update()
     {
-        if (player != null)
+        if (isStunned) return; // <-- NUEVO
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= detectionRange)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            isChasing = true;
+        }
+        else
+        {
+            isChasing = false;
+        }
 
-            if (distanceToPlayer <= detectionRange)
-            {
-                isChasing = true;
-            }
-            else
-            {
-                isChasing = false;
-            }
-
-            if (isChasing)
-            {
-                ChasePlayer(player.position);
-            }
-            else
-            {
-                Patrol();
-            }
+        if (isChasing)
+        {
+            ChasePlayer();
         }
         else
         {
@@ -60,12 +55,28 @@ public class GroundEnemy : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, patrolPosition, speed * Time.deltaTime);
     }
 
-    void ChasePlayer(Vector3 playerPosition)
+    void ChasePlayer()
     {
-        transform.position = Vector3.MoveTowards(transform.position, playerPosition, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
 
-        Vector3 dir = (playerPosition - transform.position).normalized;
+        Vector3 dir = (player.position - transform.position).normalized;
         if (dir != Vector3.zero)
             transform.forward = dir;
+    }
+
+    // --- STUN LOGIC ---
+    public void Stun(float duration)
+    {
+        if (!isStunned)
+        {
+            StartCoroutine(StunCoroutine(duration));
+        }
+    }
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
     }
 }

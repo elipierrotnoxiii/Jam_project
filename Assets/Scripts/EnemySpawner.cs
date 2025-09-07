@@ -64,6 +64,10 @@ public class EnemySpawner : MonoBehaviour
         if (ground != null)
             ground.player = player;
 
+        var charger = spawn.currentEnemy.GetComponent<ChargerEnemy>();
+        if (charger != null)
+            charger.player = player;
+
         EnemyHealth health = spawn.currentEnemy.GetComponent<EnemyHealth>();
         if (health != null)
         {

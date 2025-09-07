@@ -1232,7 +1232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPositions:
   - spawnPoint: {fileID: 358831061}
-    enemyPrefab: {fileID: 6125542584288763465, guid: 1c1fcb1cb939041ddb642208660f7f87, type: 3}
+    enemyPrefab: {fileID: 3826398686135997499, guid: dfa9bf719111d464fa18f7204a5652ca, type: 3}
     currentEnemy: {fileID: 0}
     respawnTimer: 0
   - spawnPoint: {fileID: 1994044965}
