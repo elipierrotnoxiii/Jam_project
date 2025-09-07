@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class FlyingEnemy : MonoBehaviour
 {
-    public Transform player;
+    public Transform player; // <-- Campo para asignar el player
+
     public float detectionRange = 5f;
     public float speed = 3f;
     public float patrolRadius = 4f;
@@ -15,27 +16,30 @@ public class FlyingEnemy : MonoBehaviour
     float patrolAngle = 0f;
     bool isFleeing = false;
     bool canPatrol = true;
-    bool isStunned = false; // NUEVO
+    bool isStunned = false;
 
     private Rigidbody rb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>(); // CORREGIDO
+        rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
-        rb.useGravity = false; // Asegura que normalmente no tenga gravedad
+        rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
     }
 
     void Update()
     {
-        if (isStunned) return; // Si está aturdido, no hace nada
+        if (isStunned) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        if (distanceToPlayer <= detectionRange && !isFleeing)
+        if (player != null)
         {
-            StartCoroutine(FleeFromPlayer());
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            if (distanceToPlayer <= detectionRange && !isFleeing)
+            {
+                StartCoroutine(FleeFromPlayer());
+            }
         }
 
         if (!isFleeing && canPatrol)
@@ -73,8 +77,7 @@ public class FlyingEnemy : MonoBehaviour
         isFleeing = false;
 
         rb.useGravity = true;
-        rb.linearVelocity = Vector3.zero; // Detiene cualquier movimiento
-        // Opcional: puedes desactivar el collider si quieres que no interactúe con nada más
+        rb.linearVelocity = Vector3.zero;
 
         yield return new WaitForSeconds(duration);
 
@@ -82,7 +85,6 @@ public class FlyingEnemy : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         isStunned = false;
         canPatrol = true;
-        // El enemigo vuelve a volar y patrullar
     }
 
     IEnumerator FleeFromPlayer()
@@ -94,7 +96,7 @@ public class FlyingEnemy : MonoBehaviour
         Vector3 targetPosition = transform.position + fleeDirection * fleeDistance;
 
         float elapsed = 0f;
-        while (elapsed < fleeDuration && !isStunned) // Solo huye si no está aturdido
+        while (elapsed < fleeDuration && !isStunned)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
 
