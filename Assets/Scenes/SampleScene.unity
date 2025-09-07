@@ -1223,6 +1223,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
+  skillCooldown: {fileID: 1254098354}
 --- !u!1 &1160938874
 GameObject:
   m_ObjectHideFlags: 0
